@@ -534,7 +534,7 @@
     function getAllReviewsForItemChronological($itemID, $limit, $newestFirst)
     {
         global $db;
-        $string = "SELECT Review_ID FROM review WHERE Item_ID = :ID ORDER BY Review_Date ";
+        $string = "SELECT Review_ID FROM review WHERE Item_ID = :ID ORDER BY ReviewDate ";
         $string .= $newestFirst == True ? "DESC LIMIT :Lim;" : "ASC LIMIT :Lim;";
         //get connected ItemReviews
         $stmt = $db->prepare($string);
