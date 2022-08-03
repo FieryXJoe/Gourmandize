@@ -217,18 +217,10 @@
 
         $stmt1->execute();
     }
-    function addRestaurantReview($restaurantName, $restaurantAddress, $restaurantPhone, $restaurantURL, $userID, $restaurantReview, $rating,  $uNameVis, $imageFilePath, $itemReview2DList, $categories)
+    function addRestaurantReview($restaurantID, $userID, $restaurantReview, $rating,  $uNameVis, $imageFilePath, $itemReview2DList, $categories)
     {
         global $db;
         $results = 'Data NOT Added';
-
-        $restaurantID = searchOneRestaurantID($restaurantName, $restaurantAddress, $restaurantPhone, $restaurantURL);
-
-        if($restaurantID == false)//if restaurantID wasnt found add restaurant
-        {
-            addRestaurant($restaurantName, $restaurantAddress, $restaurantPhone, $restaurantURL);
-            $restaurantID = searchOneRestaurantID($restaurantName, $restaurantAddress, $restaurantPhone, $restaurantURL);
-        }
 
         //Convert comma separated tag names into tagIDs and add/increment in database
         $tags = explode(',', $categories); 
