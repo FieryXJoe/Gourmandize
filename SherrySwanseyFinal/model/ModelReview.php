@@ -423,7 +423,7 @@
     {
         global $db;
         $results = 'Data NOT Added';
-        $stmt = $db->prepare("INSERT INTO menuItem SET Restaurant_ID = :resID, ItemName = :iName");
+        $stmt = $db->prepare("INSERT INTO menuitem SET Restaurant_ID = :resID, ItemName = :iName");
 
         $stmt -> bindValue(':resID', $restaurantID);
         $stmt -> bindValue(':iName', $name);
