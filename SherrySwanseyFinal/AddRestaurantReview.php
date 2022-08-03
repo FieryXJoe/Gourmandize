@@ -96,7 +96,7 @@
                 {
                     $singleItemArray = array();
                     
-                    $images=$_FILES['foodPic'.$i]['name'];
+                    /*$images=$_FILES['foodPic'.$i]['name'];
                     $tmp_dir=$_FILES['foodPic'.$i]['tmp_name'];
                     $imageSize=$_FILES['foodPic'.$i]['size'];
                     $upload_dir='uploads';
@@ -104,10 +104,11 @@
                     $valid_extensions=array('jpeg', 'jpg', 'png', 'gif', 'pdf');
                     $foodPic=rand(1000,1000000). ".".$imgExt;
                     move_uploaded_file($tmp_dir, $upload_dir.$foodPic);
-                    $singleItemArray['imgFilePath']=$foodPic;
+                    $singleItemArray['imgFilePath']=$foodPic;*/
                     
                     if(isset($_POST['food' . $i]) && $_POST['food' . $i] != "")
                     {
+						$singleItemArray['itemName'] = $_POST['food' . $i];
                         $itemID = searchOneItemId($resID, $_POST['food' . $i]);
                         if($itemID == false)//if restaurantID was not found add restaurant
                         {
@@ -119,8 +120,6 @@
                     }
                     else     
                         $flag = false;
-
-                    
                     
                     if(isset($_POST['foodCategories'.$i]) && $_POST['foodCategories'.$i] != "")
                     {
