@@ -84,7 +84,7 @@
                                                 echo getTagByID($tagID)['Name'] . '   ';
                                             echo '</p>';
                                         echo '</div>';
-                                        foreach(getItemsInRestaurantReview($resRev['ResReview_ID']) as $itemRev)
+										foreach(getItemsInRestaurantReview($resRev['ResReview_ID']) as $itemRev)
                                         {
                                             echo '<hr style="width:100%!important; border-top:2px solid white;"/>';
                                             echo '<div class="media my-3">';

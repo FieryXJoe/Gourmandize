@@ -162,7 +162,7 @@
 
         return $results;
     }
-    function addItemReview($restaurantID, $userID, $itemName, $resReviewID, $dateTime, $categories, $rating, $review, $anonymous, $imageFilePath)
+    function addItemReview($restaurantID, $userID, $itemName, $resReviewID, $dateTime, $categories, $rating, $review, $anonymous)
     {
         $itemID = searchOneItemId($restaurantID, $itemName);
         if($itemID == false)
@@ -183,7 +183,7 @@
             addTagByItem(trim($tag), $itemID);
             array_push($catArray, getTagIdByNameAndItem(trim($tag), $itemID));
         }
-        /*
+        
         $stmt = $db->prepare("INSERT INTO review SET Restaurant_ID = :restaurantID, User_ID = :userID, Item_ID = :itemID, Review = :review, Star_lvl = :rating, Username = :username, Uname_Visible = :visible, ReviewDate = :revDate, Category = :cat, ResReview_ID = :resRevID");
         $stmt->bindValue(':restaurantID', $restaurantID);
         $stmt->bindValue(':userID', $userID);
@@ -195,27 +195,27 @@
         $stmt->bindValue(':revDate', $dateTime);
         $stmt->bindValue(':cat', implode(',', $catArray));
         $stmt->bindValue(':resRevID', $resReviewID);
-        */
+        
 
-        $str = "INSERT INTO review SET Restaurant_ID = " . $restaurantID . ", User_ID = " . $userID . ", Item_ID = " . $itemID . ", Review = '" . $review . "', Star_lvl = " . $rating . ", Username = '" . getUsername($userID) . "', Uname_Visible = " . $anonymous . ", ReviewDate = '" . $dateTime . "', Category = '" . implode(',', $catArray) . "', ResReview_ID = " . $resReviewID . "";
-        $stmt = $db->prepare($str);
+        /*$str = "INSERT INTO review SET Restaurant_ID = " . $restaurantID . ", User_ID = " . $userID . ", Item_ID = " . $itemID . ", Review = '" . $review . "', Star_lvl = " . $rating . ", Username = '" . getUsername($userID) . "', Uname_Visible = " . $anonymous . ", ReviewDate = '" . $dateTime . "', Category = '" . implode(',', $catArray) . "', ResReview_ID = " . $resReviewID . "";
+        $stmt = $db->prepare($str);*/
         $stmt->execute ();
 
-        $stmt2 = $db->prepare("SELECT Review_ID FROM review WHERE User_ID = :userID AND ReviewDate = :revDate");
+        /*$stmt2 = $db->prepare("SELECT Review_ID FROM review WHERE User_ID = :userID AND ReviewDate = :revDate");
         $stmt2 ->bindValue(":userID", $userID);
         $stmt2 ->bindValue(":revDate", $dateTime);
         $stmt2->execute();
 
         $results = $stmt2->fetch(PDO::FETCH_ASSOC);
-        $revID = $results['Review_ID'];        
+        $revID = $results['Review_ID'];        */
 
-        $stmt1 = $db->prepare("UPDATE review SET Rimage = :Img WHERE (Review_ID = :revID)");
+        //$stmt1 = $db->prepare("UPDATE review SET Rimage = :Img WHERE (Review_ID = :revID)");
         
         //var_dump($imageFilePath);
-        $stmt1->bindValue(":Img", $imageFilePath);
-        $stmt1->bindValue(':revID', $revID);
+        //$stmt1->bindValue(":Img", $imageFilePath);
+        //$stmt1->bindValue(':revID', $revID);
 
-        $stmt1->execute();
+        //$stmt1->execute();
     }
     function addRestaurantReview($restaurantID, $userID, $restaurantReview, $rating,  $uNameVis, $imageFilePath, $itemReview2DList, $categories)
     {
@@ -259,11 +259,12 @@
         $stmt2 = $db->prepare("SELECT ResReview_ID FROM restaurantreview WHERE User_ID = :userID AND ReviewDate = :revDate LIMIT 1");
         $stmt2 ->bindValue(":revDate", $time);
         $stmt2 ->bindValue(":userID", $userID);
+
         $stmt2->execute();
 
         $results = $stmt2->fetch(PDO::FETCH_ASSOC);
         $resRevID = $results['ResReview_ID'];
-
+/*
         if($imageFilePath != "")
         {
             $stmt1 = $db->prepare("UPDATE restaurantreview SET ResImage = :Img WHERE (ResReview_ID = :resRevID)");
@@ -272,12 +273,12 @@
             $stmt1->bindValue(':resRevID', $resRevID);
 
             $stmt1->execute();
-        }
+        }*/
         $testing = array();
         //loop throught list and call addItemReview()
         foreach($itemReview2DList as $itemReviewList)
         {
-            array_push($testing, addItemReview($restaurantID, $userID, $itemReviewList['itemName'], $resRevID, $time, $itemReviewList['category'], $itemReviewList['rating'], $itemReviewList['review'], $uNameVis, $itemReviewList['imageFilePath']));
+            array_push($testing, addItemReview($restaurantID, $userID, $itemReviewList['itemName'], $resRevID, $time, $itemReviewList['category'], $itemReviewList['rating'], $itemReviewList['review'], $uNameVis));
         }
         return json_encode($restaurantID);
     }
