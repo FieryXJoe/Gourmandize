@@ -1516,5 +1516,9 @@ function uploadImageToImgur($filePath){
     $reply = curl_exec($ch);
     curl_close($ch);
     $reply = json_decode($reply, true);
+    //if sucessful delete the local version of the image
+    if($reply['success']){
+        unlink($filePath);
+    }
     return $reply['data']['link'];
 }
