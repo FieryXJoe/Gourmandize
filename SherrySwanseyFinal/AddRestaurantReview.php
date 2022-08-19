@@ -157,7 +157,7 @@
                     array_push($twoDimArray, $singleItemArray);
                 }
                 if($flag){
-                    addRestaurantReview($resID, $uID, $resReviewParams['resReview'],  $resReviewParams['resRating'], $resReviewParams['resVisible'], $restaurantPic, $twoDimArray, $resReviewParams['categories']);
+                    addRestaurantReview($resID, $uID, $resReviewParams['resReview'],  $resReviewParams['resRating'], $resReviewParams['resVisible'], $resReviewParams['resImg'], $twoDimArray, $resReviewParams['categories']);
                     //var_dump($resID, $uID, $resReviewParams['resReview'],  $resReviewParams['resRating'], $resReviewParams['resVisible'], $restaurantPic, $twoDimArray, $resReviewParams['categories']);
                     //header('Location: homepage.php');
                     //redirect to the restaurant page
