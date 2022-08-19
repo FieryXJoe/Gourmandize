@@ -25,18 +25,7 @@
 
     //Submit the info and try to add the review
     if(isset($_POST['submit']))
-    {
-        $images=$_FILES['restaurant']['name'];
-        $tmp_dir=$_FILES['restaurant']['tmp_name'];
-        $imageSize=$_FILES['restaurant']['size'];
-        $upload_dir='uploads';
-        $imgExt=strtolower(pathinfo($images, PATHINFO_EXTENSION));
-        $valid_extensions=array('jpeg', 'jpg', 'png', 'gif', 'pdf');
-        $restaurantPic=rand(1000,1000000). ".".$imgExt;
-        move_uploaded_file($tmp_dir, $upload_dir.$restaurantPic);
-                 //$stmt=$db->prepare("INSERT INTO rimages SET Img = :Img");
-                 //$stmt->bindParam(":Img", $restaurantPic); 
-        
+    {   
         $lastchars = [];
         foreach($_POST as $key => $value)
         {
