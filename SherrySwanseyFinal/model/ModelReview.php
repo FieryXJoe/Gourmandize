@@ -162,7 +162,7 @@
 
         return $results;
     }
-    function addItemReview($restaurantID, $userID, $itemName, $resReviewID, $dateTime, $categories, $rating, $review, $anonymous)
+    function addItemReview($restaurantID, $userID, $itemName, $resReviewID, $dateTime, $categories, $rating, $review, $anonymous, $imageFilePath)
     {
         $itemID = searchOneItemId($restaurantID, $itemName);
         if($itemID == false)
@@ -171,6 +171,7 @@
             //Should be guaranteed to exist now
             $itemID = searchOneItemID($restaurantID, $itemName);
         }
+        $imgURL = uploadImageToImgur($imageFilePath);
 
         global $db;
         $results = 'Data NOT Added';
@@ -184,7 +185,7 @@
             array_push($catArray, getTagIdByNameAndItem(trim($tag), $itemID));
         }
         
-        $stmt = $db->prepare("INSERT INTO review SET Restaurant_ID = :restaurantID, User_ID = :userID, Item_ID = :itemID, Review = :review, Star_lvl = :rating, Username = :username, Uname_Visible = :visible, ReviewDate = :revDate, Category = :cat, ResReview_ID = :resRevID");
+        $stmt = $db->prepare("INSERT INTO review SET Restaurant_ID = :restaurantID, User_ID = :userID, Item_ID = :itemID, Review = :review, Star_lvl = :rating, Username = :username, Uname_Visible = :visible, ReviewDate = :revDate, Category = :cat, ResReview_ID = :resRevID, ImageURL = :imgURL");
         $stmt->bindValue(':restaurantID', $restaurantID);
         $stmt->bindValue(':userID', $userID);
         $stmt->bindValue(':itemID', $itemID);
@@ -195,6 +196,7 @@
         $stmt->bindValue(':revDate', $dateTime);
         $stmt->bindValue(':cat', implode(',', $catArray));
         $stmt->bindValue(':resRevID', $resReviewID);
+        $stmt->bindValue(':imgURL', $imgURL);
         
 
         /*$str = "INSERT INTO review SET Restaurant_ID = " . $restaurantID . ", User_ID = " . $userID . ", Item_ID = " . $itemID . ", Review = '" . $review . "', Star_lvl = " . $rating . ", Username = '" . getUsername($userID) . "', Uname_Visible = " . $anonymous . ", ReviewDate = '" . $dateTime . "', Category = '" . implode(',', $catArray) . "', ResReview_ID = " . $resReviewID . "";
@@ -230,7 +232,9 @@
             addTagByRes(trim($tag), $restaurantID);
             array_push($catArray, getTagIdByNameAndRestaurant(trim($tag), $restaurantID));
         }
-      
+        
+        $imgURL = uploadImageToImgur($imageFilePath);
+
         /*$stmt = $db->prepare("INSERT INTO restaurantreview SET Restaurant_ID = :restaurantID, User_ID = :userID, Review = :review, Star_lvl = :rating, UserName = :username, ReviewDate = :revDate, Category = :cat, Visible = :visible");
       
         $stmt->bindValue(':restaurantID', $restaurantID);
@@ -244,7 +248,7 @@
         $stmt->bindValue(':visible', $uNameVis);
         */
         $time = date('Y-m-d H:i:s');
-        $str = $str = "INSERT INTO restaurantreview SET Restaurant_ID = " . $restaurantID .", User_ID = " . $userID . ", Review = '" . $restaurantReview . "', Star_lvl = " . $rating . ", UserName = '" . getUsername($userID) . "', ReviewDate = '" . $time . "', Category = '" . implode(',', $catArray) . "', Visible = " . $uNameVis . "";
+        $str = $str = "INSERT INTO restaurantreview SET Restaurant_ID = " . $restaurantID .", User_ID = " . $userID . ", Review = '" . $restaurantReview . "', Star_lvl = " . $rating . ", UserName = '" . getUsername($userID) . "', ReviewDate = '" . $time . "', Category = '" . implode(',', $catArray) . "', Visible = " . $uNameVis . ", ImageURL = '" . $imgURL . "'";
         $stmt = $db->prepare($str);
         //$stmt->debugDumpParams();
 
@@ -278,7 +282,7 @@
         //loop throught list and call addItemReview()
         foreach($itemReview2DList as $itemReviewList)
         {
-            array_push($testing, addItemReview($restaurantID, $userID, $itemReviewList['itemName'], $resRevID, $time, $itemReviewList['category'], $itemReviewList['rating'], $itemReviewList['review'], $uNameVis));
+            array_push($testing, addItemReview($restaurantID, $userID, $itemReviewList['itemName'], $resRevID, $time, $itemReviewList['category'], $itemReviewList['rating'], $itemReviewList['review'], $uNameVis, $itemReviewList['imageFilePath']));
         }
         return json_encode($restaurantID);
     }
