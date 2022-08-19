@@ -86,11 +86,22 @@
                 $resReviewParams['resVisible'] = 0;
             else     
                 $resReviewParams['resVisible'] = 1;
-            //store restaurantPic as imgFilePath as above
-            if(isset($_POST['restaurantPic']) && $_POST['restaurantPic'] != "")
-                $resReviewParams['imgFilePath'] = $restaurantPic;
-            else     
+            //store the image files from $_FILES into /uploads/ folder and store the file path in the array
+            if(isset($_FILES['restaurant']))
+            {
+                $images=$_FILES['restaurant']['name'];
+                $tmp_dir=$_FILES['restaurant']['tmp_name'];
+                $imageSize=$_FILES['restaurant']['size'];
+                $upload_dir='uploads';
+                $imgExt=strtolower(pathinfo($images, PATHINFO_EXTENSION));
+                $valid_extensions=array('jpeg', 'jpg', 'png', 'gif', 'pdf');
+                $restaurantPic=rand(1000,9999999). ".".$imgExt;
+                $resReviewParams['resImg'] = $restaurantPic;
+                move_uploaded_file($tmp_dir, $resReviewParams['resImg']);
+            }
+            else
                 $flag = false;
+
             //if all those vars were present continue
             if($flag) 
             {
@@ -139,10 +150,20 @@
                         $singleItemArray['review'] = $_POST['foodReview'.$i];
                     else     
                         $flag = false;
-                    //code for storing image filepath from foodPici
-                    if(isset($_POST['foodPic'.$i]) && $_POST['foodPic'.$i] != "")
-                        $singleItemArray['imgFilePath'] = $_POST['foodPic'.$i];
-                    else     
+                    //upload the foodPic image files from $_FILES into /uploads/ folder and store the file path in the array
+                    if(isset($_FILES['foodPic'.$i]))
+                    {
+                        $images=$_FILES['foodPic'.$i]['name'];
+                        $tmp_dir=$_FILES['foodPic'.$i]['tmp_name'];
+                        $imageSize=$_FILES['foodPic'.$i]['size'];
+                        $upload_dir='uploads';
+                        $imgExt=strtolower(pathinfo($images, PATHINFO_EXTENSION));
+                        $valid_extensions=array('jpeg', 'jpg', 'png', 'gif', 'pdf');
+                        $foodPic=rand(1000,1000000). ".".$imgExt;
+                        $singleItemArray['imgFilePath'] = $upload_dir."/".$foodPic;
+                        move_uploaded_file($tmp_dir, $singleItemArray['imgFilePath']);
+                    }
+                    else
                         $flag = false;
                     array_push($twoDimArray, $singleItemArray);
                 }
