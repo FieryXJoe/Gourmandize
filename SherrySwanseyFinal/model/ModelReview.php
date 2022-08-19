@@ -1495,9 +1495,26 @@ function addMessage($threadID, $respondingToID, $senderID, $recipientID, $messag
     }
     return json_encode($timeSent);
 }
-
-
-
-
-
-
+//Given an image file from an HTML file input uploads the image to imgur and returns the link to the image
+//Client ID is 9ba01019cecf410
+//Client Secret is a709d06adbbe53167a313a2ac52c6f2b03065a1c
+function uploadImageToImgur($filePath){
+    $clientID = '9ba01019cecf410';
+    $clientSecret = 'a709d06adbbe53167a313a2ac52c6f2b03065a1c';
+    $image = file_get_contents($filePath);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.imgur.com/3/image');
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Client-ID ' . $clientID,
+        'Content-Type: application/x-www-form-urlencoded'
+    ));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'image' => base64_encode($image)
+    ));
+    $reply = curl_exec($ch);
+    curl_close($ch);
+    $reply = json_decode($reply, true);
+    return $reply['data']['link'];
+}
