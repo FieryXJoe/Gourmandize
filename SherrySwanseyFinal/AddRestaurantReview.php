@@ -86,9 +86,11 @@
                 $resReviewParams['resVisible'] = 0;
             else     
                 $resReviewParams['resVisible'] = 1;
-            
-            //TODO:: code for sending image location too
-
+            //store restaurantPic as imgFilePath as above
+            if(isset($_POST['restaurantPic']) && $_POST['restaurantPic'] != "")
+                $resReviewParams['imgFilePath'] = $restaurantPic;
+            else     
+                $flag = false;
             //if all those vars were present continue
             if($flag) 
             {
@@ -137,7 +139,11 @@
                         $singleItemArray['review'] = $_POST['foodReview'.$i];
                     else     
                         $flag = false;
-                    //TODO:: Code for sending image location
+                    //code for storing image filepath from foodPici
+                    if(isset($_POST['foodPic'.$i]) && $_POST['foodPic'.$i] != "")
+                        $singleItemArray['imgFilePath'] = $_POST['foodPic'.$i];
+                    else     
+                        $flag = false;
                     array_push($twoDimArray, $singleItemArray);
                 }
                 if($flag){
