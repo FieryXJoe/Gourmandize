@@ -43,9 +43,14 @@
         $stmt->bindValue(':email', $email);
         $stmt->bindValue(':pass', $hashedPass);
         
-        $stmt->execute ();
+        $success = false;
+        try{
+            $stmt -> execute();
+            $success = $stmt->rowCount() > 0;
+        }
+        catch(Exception $e){}
     
-        return( $stmt->rowCount() > 0);
+        return( $success);
     }
     function checkUser($email)
     {
@@ -54,9 +59,14 @@
 
         $stmt->bindValue(':email', $email);
         
-        $stmt->execute ();
+        $success = false;
+        try{
+            $stmt -> execute();
+            $success = $stmt->rowCount() > 0;
+        }
+        catch(Exception $e){}
     
-        return( $stmt->rowCount() > 0);
+        return( $success);
     }
     function delUser($userID)
     {
@@ -65,9 +75,14 @@
 
         $stmt->bindValue(':userID', $userID);
 
-        $stmt->execute ();
+        $success = false;
+        try{
+            $stmt -> execute();
+            $success = $stmt->rowCount() > 0;
+        }
+        catch(Exception $e){}
 
-        return( $stmt->rowCount() > 0);
+        return($success);
     }
     function modifyUser($userID, $username, $email, $hashedPass, $first, $last, $imageFilePath)
     {
@@ -82,11 +97,12 @@
         $stmt -> bindValue(':lname', $last);
         $stmt -> bindValue(':id', $userID);
         
-
-        if ($stmt->execute() && $stmt->rowCount() > 0) 
-        {
-            $results = 'Data Updated';
-        }
+        try{
+            if ($stmt->execute() && $stmt->rowCount() > 0) 
+            {
+                $results = 'Data Updated';
+            }
+        } catch(Exception $e){}
         
         return ($results);
     }
@@ -97,8 +113,12 @@
 
         $stmt->bindValue(':userID', $userID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt -> execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = false;
+        }
 
         return $results['Username'];
     }
@@ -109,8 +129,12 @@
 
         $stmt->bindValue(':resID', $restaurantID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt -> execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = false;
+        }
 
         return $results['Restaurant_Name'];
     }
@@ -121,8 +145,12 @@
 
         $stmt->bindValue(':itemID', $itemID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt -> execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = false;
+        }
 
         return $results['ItemName'];
     }
@@ -133,10 +161,12 @@
 
         $stmt->bindValue(':userID', $userID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $results;
+        try{
+            $stmt -> execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = false;
+        }
     }
     function getRestaurantByID($restaurantID)
     {
@@ -145,8 +175,14 @@
 
         $stmt->bindValue(':resID', $restaurantID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        catch (Exception $ex)
+        {
+            $results = false;
+        }
 
         return $results;
     }
@@ -157,8 +193,14 @@
 
         $stmt->bindValue(':itemID', $itemID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        catch (Exception $ex)
+        {
+            $results = false;
+        }
 
         return $results;
     }
@@ -201,7 +243,9 @@
 
         /*$str = "INSERT INTO review SET Restaurant_ID = " . $restaurantID . ", User_ID = " . $userID . ", Item_ID = " . $itemID . ", Review = '" . $review . "', Star_lvl = " . $rating . ", Username = '" . getUsername($userID) . "', Uname_Visible = " . $anonymous . ", ReviewDate = '" . $dateTime . "', Category = '" . implode(',', $catArray) . "', ResReview_ID = " . $resReviewID . "";
         $stmt = $db->prepare($str);*/
-        $stmt->execute ();
+        try{
+            $stmt->execute ();
+        } catch(Exception $e){}
 
         /*$stmt2 = $db->prepare("SELECT Review_ID FROM review WHERE User_ID = :userID AND ReviewDate = :revDate");
         $stmt2 ->bindValue(":userID", $userID);
@@ -252,7 +296,9 @@
         $stmt = $db->prepare($str);
         //$stmt->debugDumpParams();
 
-        $stmt->execute();
+        try{
+            $stmt->execute ();
+        } catch(Exception $e){}
         //var_dump($stmt);
         
         //TODO:: REMOVE THIS DUMMY
@@ -264,9 +310,12 @@
         $stmt2 ->bindValue(":revDate", $time);
         $stmt2 ->bindValue(":userID", $userID);
 
-        $stmt2->execute();
-
-        $results = $stmt2->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt2->execute();
+            $results = $stmt2->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
         $resRevID = $results['ResReview_ID'];
 /*
         if($imageFilePath != "")
@@ -361,7 +410,9 @@
 
         $stmt->bindValue(':ID', $resReviewID);
 
-        $stmt->execute ();
+        try{
+            $stmt->execute();
+        } catch(Exception $e){}
 
         return( $stmt->rowCount() > 0);
     }
@@ -373,8 +424,12 @@
         //LoopThrough connected ItemReviews
         $stmt = $db->prepare("SELECT Review_ID, COUNT(*) AS reviewCount FROM review WHERE ResReview_ID = :ID;");
         $stmt->bindValue(':ID', $resReviewID);
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);   
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
         
         $reviewCount = $results['reviewCount'];//Number
         $reviewIDs = $results['Review_ID'];//Array
@@ -394,7 +449,9 @@
 
         $stmt->bindValue(':ID', $itemReviewID);
 
-        $stmt->execute ();
+        try{
+            $stmt->execute();
+        } catch(Exception $e){}
 
         return( $stmt->rowCount() > 0);
     }
@@ -409,9 +466,12 @@
         $stmt -> bindValue(':phone', $phone);
         $stmt -> bindValue(':resURL', $url);
         
-        if ($stmt->execute() && $stmt->rowCount() > 0) 
-        {
-            $results = 'Data Added';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = 'Data Added';
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
         }
         
         return ($results);
@@ -424,10 +484,13 @@
 
         $stmt -> bindValue(':resID', $restaurantID);
         $stmt -> bindValue(':iName', $name);
-        
-        if ($stmt->execute() && $stmt->rowCount() > 0) 
-        {
-            $results = 'Data Added';
+
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = 'Data Added';
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
         }
         
         return ($results);
@@ -439,8 +502,12 @@
 
         $stmt->bindValue(':ID', $resReviewID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
 
         return $results;
     }
@@ -451,8 +518,12 @@
 
         $stmt->bindValue(':ID', $reviewID);
         
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
 
         return $results;
     }
@@ -463,8 +534,12 @@
         $stmt = $db->prepare("SELECT Review_ID FROM review WHERE ResReview_ID = :ID;");
         $stmt->bindValue(':ID', $resReviewID);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
 
         $itemReviewList = array();
         //loop through and append to list
@@ -482,9 +557,13 @@
         $stmt = $db->prepare("SELECT ResReview_ID FROM restaurantreview WHERE Restaurant_ID = :ID;");
         $stmt->bindValue(':ID', $restaurantID);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
+        
         $resReviewList = array();
         //loop through and append to list
         foreach($results as $result)
@@ -504,8 +583,12 @@
         $stmt->bindValue(':ID', $restaurantID);
         $stmt->bindValue(':Lim', $limit);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
 
         $resReviewList = array();
         //loop through and append to list
@@ -523,9 +606,13 @@
         $stmt = $db->prepare("SELECT Review_ID FROM review WHERE Item_ID = :ID;");
         $stmt->bindValue(':ID', $itemID);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
+        
         $itemReviewList = array();
         //loop through and append to list
         foreach($results as $result)
@@ -545,9 +632,13 @@
         $stmt->bindValue(':ID', $itemID);
         $stmt->bindValue(':Lim', $limit);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
+        
         $itemReviewList = array();
         //loop through and append to list
         foreach($results as $result)
@@ -564,9 +655,13 @@
         $stmt = $db->prepare("SELECT ResReview_ID FROM restaurantreview WHERE User_ID = :ID;");
         $stmt->bindValue(':ID', $userID);
 
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
+        
         $resReviewList = array();
         //loop through and append to list
         foreach($results as $result)
@@ -586,9 +681,13 @@
         $stmt->bindValue(':ID', $userID);
         $stmt->bindValue(':Lim', $limit);
 
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
+        
         $resReviewList = array();
         //loop through and append to list
         foreach($results as $result)
@@ -607,9 +706,13 @@
         $stmt = $db->prepare($string);
         $stmt->bindValue(':ID', $userID);
 
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
+        
         $resReviewList = array();
         //loop through and append to list
         foreach($results as $result)
@@ -630,8 +733,12 @@
         $stmt->bindValue(':phone', $phone);
         $stmt->bindValue(':resURL', $url);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
         if($stmt->rowCount() == 1)
             return $results['Restaurant_ID'];
         else
@@ -646,8 +753,12 @@
         $stmt->bindValue(':itemName', $name);
         $stmt->bindValue(':resID', $resID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Added';
+        }
         if($stmt->rowCount() == 1)
             return $results['Item_ID'];
         else
@@ -719,8 +830,12 @@
         $stmt->bindValue(':id', $reviewID);
 
       
-        if ($stmt->execute() && $stmt->rowCount() > 0) {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         
         return ($results);
@@ -755,9 +870,12 @@
         $stmt->bindValue(':id', $resReviewID);
         $stmt->bindValue(':cats', implode(',', $tagIDs));
 
-        if ($stmt->execute() && $stmt->rowCount() > 0) 
-        {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         
         return ($results);
@@ -776,9 +894,12 @@
         $stmt->bindValue(':resURL', $url);
         $stmt->bindValue(':id', $restaurantID);
 
-        if ($stmt->execute() && $stmt->rowCount() > 0) 
-        {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         
         return ($results);
@@ -790,8 +911,12 @@
 
         $stmt->bindValue(':useremail', $useremail, PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
 
         return $results['User_ID'];
     }
@@ -803,9 +928,13 @@
 
         $stmt->bindValue(':ID', $ReviewID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results;
     }
     function getAllReviewsByUser($userID)
@@ -815,8 +944,12 @@
         $stmt = $db->prepare("SELECT * FROM review WHERE User_ID = :ID;");
         $stmt->bindValue(':ID', $userID);
 
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
 
         $reviewList = array();
         //loop through and append to list
@@ -835,9 +968,13 @@
 
         $stmt->bindValue(':tagID', $tagID);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results;
     }
     //For getting the ID's when submitting a resReview to store in the resReview SQL
@@ -849,9 +986,13 @@
         $stmt->bindValue(':name', $name, PDO::PARAM_STR);
         $stmt->bindValue(':resID', $resID, PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results == false? false:$results['Tag_ID'];
     }
     //For getting the ID's when submitting a review to store in the review SQL
@@ -863,9 +1004,13 @@
         $stmt->bindValue(':name', $name, PDO::PARAM_STR);
         $stmt->bindValue(':itemID', $itemID, PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results == false? false:$results['Tag_ID'];
     }
     function addTagByRes($name, $resID)
@@ -880,10 +1025,13 @@
             $stmt -> bindValue(':resID', $resID);
             $stmt -> bindValue(':name', $name);
 
-            if ($stmt->execute() && $stmt->rowCount() > 0) 
-                $results = 'Data Added';
-            else
-                $results = 'Data failed to add';
+            try{
+                $stmt->execute();
+                if($stmt->rowCount() > 0)
+                    $results = "Data Added";
+            } catch(Exception $e){
+                $results = 'Data NOT Added';
+            }
         }
         else
         {
@@ -904,10 +1052,13 @@
             $stmt -> bindValue(':itemID', $itemID);
             $stmt -> bindValue(':name', $name);
 
-            if ($stmt->execute() && $stmt->rowCount() > 0) 
-                $results = 'Data Added';
-            else
-                $results = 'Data failed to add';
+            try{
+                $stmt->execute();
+                if($stmt->rowCount() > 0)
+                    $results = "Data Added";
+            } catch(Exception $e){
+                $results = 'Data NOT Added';
+            }
         }
         else
         {
@@ -926,8 +1077,12 @@
         
         $stmt->bindValue(':tagID', $tagID);
       
-        if ($stmt->execute() && $stmt->rowCount() > 0) {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         return ($results);
     }
@@ -941,8 +1096,12 @@
         
         $stmt->bindValue(':tagID', $tagID);
       
-        if ($stmt->execute() && $stmt->rowCount() > 0) {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         return ($results);
     }
@@ -956,9 +1115,14 @@
         
         $stmt->bindValue(':searchID', $searchID);
       
-        if ($stmt->execute() && $stmt->rowCount() > 0) {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
+
         return ($results);
     }
     function decrementSearchID($searchID)
@@ -971,9 +1135,14 @@
         
         $stmt->bindValue(':searchID', $searchID);
       
-        if ($stmt->execute() && $stmt->rowCount() > 0) {
-            $results = 'Data Updated';
+        try{
+            $stmt->execute();
+            if($stmt->rowCount() > 0)
+                $results = "Data Updated";
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
+        
         return ($results);
     }
     function getSearchIdByTerm($term)
@@ -983,9 +1152,13 @@
 
         $stmt->bindValue(':term', '%' . $term . '%', PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results == false? false:$results['Search_ID'];
     }
     function addSearchTerm($term)
@@ -1001,10 +1174,13 @@
 
             $stmt -> bindValue(':term', $term);
 
-            if ($stmt->execute() && $stmt->rowCount() > 0) 
-                $results = 'Data Added';
-            else
-                $results = 'Data failed to add';
+            try{
+                $stmt->execute();
+                if($stmt->rowCount() > 0)
+                    $results = "Data Added";
+            } catch(Exception $e){
+                $results = 'Data NOT Added';
+            }
         }
         else
         {
@@ -1023,9 +1199,13 @@
         $stmt->bindValue(':userID', $userID);
         $stmt->bindValue(':userIDTwo', $userID);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+    
         return $results;
     }
     function getAllMessagesInThread($threadID)
@@ -1037,9 +1217,13 @@
         $stmt = $db->prepare($string);
         $stmt->bindValue(':threadID', $threadID);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         $returnArray = array();
 
         foreach($results as $result)
@@ -1059,9 +1243,13 @@
         $stmt = $db->prepare($string);
         $stmt->bindValue(':threadID', $threadID);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results;
     }
     function getAllAdminIDs()
@@ -1072,8 +1260,12 @@
         //get connected ItemReviews
         $stmt = $db->prepare($string);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);   
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
 
         return $results;
     }
@@ -1159,9 +1351,13 @@
         $stmt->bindValue(':num', $numCategories, PDO::PARAM_STR);
         $stmt->bindValue(':itemID', $itemID, PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results;
     }
     function getCommonRestaurantCategories($restaurantID, $numCategories)
@@ -1171,8 +1367,12 @@
         $stmt->bindValue(':num', $numCategories, PDO::PARAM_STR);
         $stmt->bindValue(':restaurantID', $restaurantID, PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
 
         return $results;
     }
@@ -1183,9 +1383,13 @@
 
         $stmt->bindValue(':num', $numCategories, PDO::PARAM_STR);
 
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results;
     }
     
@@ -1218,11 +1422,11 @@
         //get connected ItemReviews
         $stmt = $db->prepare("SELECT * FROM restaurant WHERE Restaurant_Name LIKE :totalSearch;");
         $stmt->bindValue(':totalSearch', '%'.$totalSearch.'%');
-        if ($stmt->execute() && $stmt->rowCount() > 0) {
+        try{
+            $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        else{
-            $results='';
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         return $results;
 }
@@ -1232,11 +1436,11 @@
 
         $stmt= $db->prepare("SELECT * FROM menuitem WHERE ItemName LIKE :totalSearch;");
         $stmt->bindValue(':totalSearch', '%'.$totalSearch.'%');
-        if ($stmt->execute() && $stmt->rowCount()>0){
+        try{
+            $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        else{
-            $results='';
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
         }
         return $results;
 }
@@ -1279,7 +1483,12 @@ function checkResOwnerLogin($userID)
 
     $stmt->bindValue(':userID', $userID);
     
-    $stmt->execute ();
+    try{
+        $stmt->execute();
+        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(Exception $e){
+        $results = 'Data NOT Updated';
+    }
 
     return( $stmt->rowCount() > 0);
 }
@@ -1292,11 +1501,11 @@ function findOwnedRes($userID){
 
     $stmt->execute();
 
-    if ($stmt->execute() && $stmt->rowCount()>0){
+    try{
+        $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    else{
-        $results=false;
+    } catch(Exception $e){
+        $results = 'Data NOT Updated';
     }
     return $results;
 }
@@ -1308,7 +1517,9 @@ function addResponse($response, $resReviewID){
     $stmt->bindValue(':Response', $response);
     $stmt->bindValue(':resReviewID', $resReviewID);
 
-    $stmt->execute();
+    try{
+        $stmt->execute();
+    } catch(Exception $e){}
 }
 
 function getResReviewID($res_ID)
@@ -1318,12 +1529,11 @@ function getResReviewID($res_ID)
 
     $stmt->bindValue(':ID', $res_ID);
 
-    $stmt->execute();
-    if ($stmt->execute() && $stmt->rowCount()>0){
+    try{
+        $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    else{
-        $results=false;
+    } catch(Exception $e){
+        $results = 'Data NOT Updated';
     }
     return $results;
 }
@@ -1334,12 +1544,11 @@ function findReview($resReview_ID){
 
     $stmt->bindValue(':resRevID', $resReview_ID);
 
-    $stmt->execute();
-    if ($stmt->execute() && $stmt->rowCount()>0){
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    else{
-        $results=false;
+    try{
+        $stmt->execute();
+        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(Exception $e){
+        $results = 'Data NOT Updated';
     }
     return $results;
 }
@@ -1351,12 +1560,11 @@ function getItemsByResID($res_ID)
 
     $stmt->bindValue(':res_ID', $res_ID);
 
-    $stmt->execute();
-    if ($stmt->execute() && $stmt->rowCount()>0){
+    try{
+        $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    else{
-        $results=false;
+    } catch(Exception $e){
+        $results = 'Data NOT Updated';
     }
     return $results;
 }
@@ -1367,10 +1575,13 @@ function getMostPopularSearches($num){
 
         $stmt->bindValue(':num', $num, PDO::PARAM_STR);
 
-
-        $stmt->execute();
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-
+        try{
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e){
+            $results = 'Data NOT Updated';
+        }
+        
         return $results;
 }
 function getReviewPictures($id){
@@ -1458,9 +1669,12 @@ function getRecentMessageRespondingTo($id)
     $stmt = $db->prepare("SELECT * FROM adminmessage WHERE RespondingTo_ID = :id LIMIT 1");
 
     $stmt->bindValue(':id', $id);
-    $stmt->execute();
-    //should only be one
-    $message = $stmt-> fetchAll(PDO::FETCH_ASSOC);
+    try{
+        $stmt->execute();
+        $message = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(Exception $e){
+        $message = 'Data NOT Updated';
+    }
 
     $message[0]['SenderUsername'] = getUsername($message[0]['Sender_ID']);
 
@@ -1493,9 +1707,11 @@ function addMessage($threadID, $respondingToID, $senderID, $recipientID, $messag
     $stmt -> bindValue(':timeSent', date('Y-m-d H:i:s'));
     $stmt -> bindValue(':topic', $topic);
     
-    if ($stmt->execute() && $stmt->rowCount() > 0) 
-    {
+    try{
+        $stmt->execute();
         $results = 'Data Added';
+    } catch(Exception $e){
+        $results = 'Data NOT Added';
     }
     return json_encode($timeSent);
 }
